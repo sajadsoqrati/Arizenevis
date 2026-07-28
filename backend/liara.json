@@ -1,0 +1,12 @@
+{
+  "platform": "node",
+  "app": "law-backend",
+  "port": 4000,
+  "build": {
+    "location": "backend"
+  },
+  "node": {
+    "version": "20"
+  },
+  "disks": []
+}
