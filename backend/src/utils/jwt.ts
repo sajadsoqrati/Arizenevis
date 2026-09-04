@@ -8,12 +8,12 @@ export interface JwtPayload {
 }
 
 export function signAccessToken(payload: JwtPayload): string {
-  const options: SignOptions = { expiresIn: "15m" };
+  const options: SignOptions = { expiresIn: "10h" };
   return jwt.sign(payload, config.jwt.accessSecret, options);
 }
 
 export function signRefreshToken(payload: JwtPayload): string {
-  const options: SignOptions = { expiresIn: "7d" };
+  const options: SignOptions = { expiresIn: "30d" };
   return jwt.sign(payload, config.jwt.refreshSecret, options);
 }
 

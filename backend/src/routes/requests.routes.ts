@@ -5,6 +5,7 @@ import { prisma } from "../config/database";
 import { authenticate, authorize, AuthRequest } from "../middleware/auth";
 import { asyncHandler, AppError } from "../middleware/errorHandler";
 import { paramId } from "../utils/params";
+import { adminNotificationService } from "../services/admin-notification.service";
 
 const router = Router();
 
@@ -35,8 +36,24 @@ router.post(
         question: data.question,
         status: HelpRequestStatus.PENDING_PRICE,
       },
-      include: { category: true },
+      include: {
+        category: true,
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+            role: true,
+            city: true,
+            province: true,
+          },
+        },
+      },
     });
+
+    if (adminNotificationService.isAnyAdminOnline()) {
+      adminNotificationService.notifyNewHelpRequest(helpRequest);
+    }
 
     res.status(201).json({
       message: "درخواست شما ثبت شد. پس از تعیین قیمت توسط مدیر مطلع خواهید شد.",

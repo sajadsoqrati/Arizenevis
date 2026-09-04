@@ -1,6 +1,7 @@
 import { HelpRequestStatus, Role } from "@prisma/client";
 import { prisma } from "../config/database";
 import { calculateCommissionAmount } from "./commission.service";
+import { AppError } from "../middleware/errorHandler";
 
 export async function getNextInteractionNumber(userId: string): Promise<number> {
   const paidCount = await prisma.helpRequest.count({
@@ -99,15 +100,15 @@ export async function validateDiscountCode(
   });
 
   if (!discount || !discount.isActive) {
-    throw new Error("کد تخفیف نامعتبر است");
+    throw new AppError(400, "کد تخفیف نامعتبر است");
   }
 
   if (discount.maxUses !== null && discount.usedCount >= discount.maxUses) {
-    throw new Error("ظرفیت استفاده از این کد تخفیف تمام شده است");
+    throw new AppError(400, "ظرفیت استفاده از این کد تخفیف تمام شده است");
   }
 
   if (discount.firstTimeOnly && interactionNumber > 1) {
-    throw new Error("این کد تخفیف فقط برای اولین خرید قابل استفاده است");
+    throw new AppError(400, "این کد تخفیف فقط برای اولین خرید قابل استفاده است");
   }
 
   const existingUse = await prisma.payment.findFirst({
@@ -119,7 +120,7 @@ export async function validateDiscountCode(
   });
 
   if (existingUse) {
-    throw new Error("شما قبلاً از این کد تخفیف استفاده کرده‌اید");
+    throw new AppError(400, "شما قبلاً از این کد تخفیف استفاده کرده‌اید");
   }
 
   return discount;

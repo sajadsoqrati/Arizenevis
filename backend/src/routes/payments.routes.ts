@@ -56,9 +56,10 @@ router.post(
     let discountAmount = 0;
     let finalAmount = originalPrice;
 
-    if (data.discountCode) {
+    const discountCode = data.discountCode?.trim();
+    if (discountCode) {
       const discount = await validateDiscountCode(
-        data.discountCode,
+        discountCode,
         helpRequest.userId,
         interactionNumber
       );

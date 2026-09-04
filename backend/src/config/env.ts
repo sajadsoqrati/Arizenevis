@@ -17,8 +17,8 @@ export const config = {
   jwt: {
     accessSecret: requireEnv("JWT_ACCESS_SECRET"),
     refreshSecret: requireEnv("JWT_REFRESH_SECRET"),
-    accessExpiresIn: "15m",
-    refreshExpiresIn: "7d",
+    accessExpiresIn: "10h",
+    refreshExpiresIn: "30d",
   },
   zarinpal: {
     merchantId: process.env.ZARINPAL_MERCHANT_ID || "",

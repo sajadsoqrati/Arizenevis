@@ -9,6 +9,7 @@ import categoriesRoutes from "./routes/categories.routes";
 import requestsRoutes from "./routes/requests.routes";
 import paymentsRoutes from "./routes/payments.routes";
 import adminRoutes from "./routes/admin.routes";
+import adminNotificationsRoutes from "./routes/admin-notifications.routes";
 import marketerRoutes from "./routes/marketer.routes";
 import blogRoutes from "./routes/blog.routes";
 
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/requests", requestsRoutes);
 app.use("/api/payments", paymentsRoutes);
+app.use("/api/admin/notifications", adminNotificationsRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/marketer", marketerRoutes);
 app.use("/api/blog", blogRoutes);
