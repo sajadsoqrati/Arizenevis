@@ -1,12 +1,9 @@
 {
-  "platform": "node",
+  "platform": "next",
   "app": "law-frontend",
   "port": 3000,
   "build": {
-    "location": "frontend"
-  },
-  "node": {
-    "version": "20"
+    "location": "iran"
   },
   "disks": []
 }

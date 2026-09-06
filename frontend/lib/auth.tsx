@@ -37,6 +37,7 @@ interface RegisterData {
   city: string;
   province: string;
   referralCode?: string;
+  acceptedTerms: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);

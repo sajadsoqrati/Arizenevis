@@ -13,6 +13,10 @@ function getGatewayUrl() {
   return config.zarinpal.sandbox ? SANDBOX_GATEWAY : PRODUCTION_GATEWAY;
 }
 
+export function getPaymentGatewayUrl(authority: string): string {
+  return `${getGatewayUrl()}/${authority}`;
+}
+
 export async function requestPayment(
   amount: number,
   description: string,
@@ -43,7 +47,7 @@ export async function requestPayment(
 
   return {
     authority: data.data.authority,
-    gatewayUrl: `${getGatewayUrl()}/${data.data.authority}`,
+    gatewayUrl: getPaymentGatewayUrl(data.data.authority),
   };
 }
 

@@ -11,7 +11,11 @@ import {
   calculateFinalAmount,
   processSuccessfulPayment,
 } from "../services/payment.service";
-import { requestPayment, verifyPayment } from "../services/zarinpal.service";
+import {
+  getPaymentGatewayUrl,
+  requestPayment,
+  verifyPayment,
+} from "../services/zarinpal.service";
 import { paramId } from "../utils/params";
 
 const router = Router();
@@ -47,6 +51,23 @@ router.post(
       throw new AppError(400, "این درخواست قبلاً پرداخت شده است");
     }
 
+    // Never replace a pending attempt that already has a gateway authority.
+    // The old authority may still be paid, so deleting or overwriting it could
+    // leave the user charged without a matching payment record.
+    if (
+      helpRequest.payment?.status === "PENDING" &&
+      helpRequest.payment.zarinpalAuthority
+    ) {
+      res.json({
+        message: "ادامه پرداخت قبلی",
+        gatewayUrl: getPaymentGatewayUrl(
+          helpRequest.payment.zarinpalAuthority
+        ),
+        paymentId: helpRequest.payment.id,
+      });
+      return;
+    }
+
     const originalPrice = helpRequest.price!;
     const interactionNumber = await getNextInteractionNumber(
       helpRequest.userId
@@ -69,20 +90,30 @@ router.post(
       discountCodeId = discount.id;
     }
 
-    if (helpRequest.payment) {
-      await prisma.payment.delete({ where: { id: helpRequest.payment.id } });
-    }
-
-    const payment = await prisma.payment.create({
-      data: {
-        helpRequestId: helpRequest.id,
-        originalPrice,
-        discountAmount,
-        finalAmount,
-        discountCodeId,
-        status: "PENDING",
-      },
-    });
+    const payment = helpRequest.payment
+      ? await prisma.payment.update({
+          where: { id: helpRequest.payment.id },
+          data: {
+            originalPrice,
+            discountAmount,
+            finalAmount,
+            discountCodeId,
+            status: "PENDING",
+            zarinpalAuthority: null,
+            zarinpalRefId: null,
+            paidAt: null,
+          },
+        })
+      : await prisma.payment.create({
+          data: {
+            helpRequestId: helpRequest.id,
+            originalPrice,
+            discountAmount,
+            finalAmount,
+            discountCodeId,
+            status: "PENDING",
+          },
+        });
 
     if (finalAmount === 0) {
       await processSuccessfulPayment(payment.id);
@@ -134,9 +165,18 @@ router.get(
       return;
     }
 
+    // A repeated callback must never change a completed payment back to FAILED.
+    if (payment.status === "SUCCESS") {
+      res.redirect(`${config.frontendUrl}/dashboard?payment=success`);
+      return;
+    }
+
     if (status !== "OK") {
-      await prisma.payment.update({
-        where: { id: payment.id },
+      await prisma.payment.updateMany({
+        where: {
+          id: payment.id,
+          status: { not: "SUCCESS" },
+        },
         data: { status: "FAILED" },
       });
       res.redirect(`${config.frontendUrl}/dashboard?payment=failed`);
@@ -152,8 +192,11 @@ router.get(
       await processSuccessfulPayment(payment.id);
       res.redirect(`${config.frontendUrl}/dashboard?payment=success`);
     } catch {
-      await prisma.payment.update({
-        where: { id: payment.id },
+      await prisma.payment.updateMany({
+        where: {
+          id: payment.id,
+          status: { not: "SUCCESS" },
+        },
         data: { status: "FAILED" },
       });
       res.redirect(`${config.frontendUrl}/dashboard?payment=failed`);

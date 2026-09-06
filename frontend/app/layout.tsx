@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],
@@ -24,12 +25,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body className={`${vazir.variable} antialiased min-h-screen`}>
+      <body
+        className={`${vazir.variable} flex min-h-screen flex-col antialiased`}
+      >
         <AuthProvider>
           <Navbar />
-          <main className="container mx-auto px-4 py-8 max-w-6xl">
+          <main className="container mx-auto flex-1 px-4 py-8 max-w-6xl">
             {children}
           </main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

@@ -3,7 +3,7 @@
   "app": "law-backend",
   "port": 4000,
   "build": {
-    "location": "backend"
+    "location": "iran"
   },
   "node": {
     "version": "20"

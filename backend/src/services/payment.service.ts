@@ -39,13 +39,21 @@ export async function processSuccessfulPayment(paymentId: string) {
     (await getNextInteractionNumber(helpRequest.userId));
 
   await prisma.$transaction(async (tx) => {
-    await tx.payment.update({
-      where: { id: paymentId },
+    const claimed = await tx.payment.updateMany({
+      where: {
+        id: paymentId,
+        status: { not: "SUCCESS" },
+      },
       data: {
         status: "SUCCESS",
         paidAt: new Date(),
       },
     });
+
+    // A different callback already completed this payment.
+    if (claimed.count === 0) {
+      return;
+    }
 
     await tx.helpRequest.update({
       where: { id: helpRequest.id },

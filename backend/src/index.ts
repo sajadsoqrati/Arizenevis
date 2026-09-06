@@ -15,6 +15,10 @@ import blogRoutes from "./routes/blog.routes";
 
 const app = express();
 
+// Liara forwards requests through one reverse proxy. Trusting that hop lets
+// Express and express-rate-limit identify the real client IP correctly.
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: config.frontendUrl,

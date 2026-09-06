@@ -9,41 +9,57 @@ export default function Navbar() {
   const { user, loading, logout } = useAuth();
 
   return (
-    <nav className="bg-primary text-white shadow-md">
-      <div className="container mx-auto px-4 max-w-6xl flex items-center justify-between h-20">
+    <nav className="bg-primary rounded-2xl text-white shadow-md m-3">
+      <div className="container relative mx-auto flex min-h-20 max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2 lg:flex-nowrap">
         <Link
           href="/"
-          className="xs:text-xl sm:text-2xl font-extrabold hover:opacity-90 flex items-center gap-2"
+          className="flex shrink-0 items-center gap-2 font-extrabold hover:opacity-90 sm:text-2xl"
         >
           <Image
             src="/logo.svg"
             alt="logo"
             width={40}
             height={40}
-            className="w-15 h-15 m-2"
+            className="m-1 h-12 w-12 sm:h-14 sm:w-14"
           />
-          عریضه نویس
+          <span className="hidden sm:inline">عریضه نویس</span>
         </Link>
 
-        <div className="flex items-center gap-4 text-sm">
+        <div className="order-3 flex w-full items-center justify-center gap-2 pb-1 text-xs sm:gap-3 sm:text-sm lg:absolute lg:left-1/2 lg:top-1/2 lg:order-none lg:w-auto lg:-translate-x-1/2 lg:-translate-y-1/2 lg:pb-0">
+          <Link
+            href="/about"
+            className="whitespace-nowrap rounded-lg bg-background px-3 py-1.5 font-medium text-primary transition-opacity hover:opacity-90 sm:px-4"
+          >
+            درباره ما
+          </Link>
+
+          <Link
+            href="/contact"
+            className="whitespace-nowrap rounded-lg bg-background px-3 py-1.5 font-medium text-primary transition-opacity hover:opacity-90 sm:px-4"
+          >
+            تماس با ما
+          </Link>
+
           <Link
             href="/weblog"
-            className="bg-background text-primary px-4 py-1.5 rounded-lg font-medium hover:opacity-90"
+            className="whitespace-nowrap rounded-lg bg-background px-3 py-1.5 font-medium text-primary transition-opacity hover:opacity-90 sm:px-4"
           >
             وبلاگ
           </Link>
+        </div>
 
+        <div className="flex items-center gap-2 text-sm sm:gap-4 sm:text-base">
           {!loading && !user && (
             <>
               <Link
                 href="/login"
-                className="bg-background text-primary px-4 py-1.5 rounded-lg font-medium hover:opacity-90"
+                className="rounded-lg bg-background px-4 py-2 font-medium text-primary hover:opacity-90 sm:px-5"
               >
                 ورود
               </Link>
               <Link
                 href="/register"
-                className="bg-4service-btn text-primary px-4 py-1.5 rounded-lg font-medium hover:opacity-90"
+                className="rounded-lg bg-4service-btn px-4 py-2 font-medium text-primary hover:opacity-90 sm:px-5"
               >
                 ثبت‌نام
               </Link>

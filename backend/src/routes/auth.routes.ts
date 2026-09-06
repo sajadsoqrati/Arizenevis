@@ -24,6 +24,9 @@ const registerSchema = z.object({
   city: z.string().min(2, "شهر الزامی است"),
   province: z.string().min(2, "استان الزامی است"),
   referralCode: z.string().optional(),
+  acceptedTerms: z.boolean().refine((value) => value, {
+    message: "برای ثبت‌نام باید قوانین و مقررات سایت را بپذیرید",
+  }),
 });
 
 const loginSchema = z.object({

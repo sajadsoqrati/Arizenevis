@@ -23,6 +23,9 @@ const registerSchema = z
     city: z.string().min(2, "شهر الزامی است"),
     province: z.string().min(2, "استان الزامی است"),
     referralCode: z.string().optional(),
+    acceptedTerms: z.boolean().refine((value) => value, {
+      message: "برای ثبت‌نام باید قوانین و مقررات سایت را بپذیرید",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "رمز عبور و تکرار آن یکسان نیست",
@@ -44,7 +47,7 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: "CUSTOMER" },
+    defaultValues: { role: "CUSTOMER", acceptedTerms: false },
   });
 
   const selectedRole = watch("role");
@@ -68,6 +71,7 @@ export default function RegisterPage() {
           data.role === "COWORKER"
             ? data.referralCode?.trim() || undefined
             : undefined,
+        acceptedTerms: data.acceptedTerms,
       });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "خطا در ثبت‌نام");
@@ -199,6 +203,34 @@ export default function RegisterPage() {
           {errors.confirmPassword && (
             <p className="text-red-500 text-sm mt-1">
               {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              {...register("acceptedTerms")}
+              className="mt-1 h-4 w-4 shrink-0 accent-primary cursor-pointer"
+              aria-invalid={errors.acceptedTerms ? "true" : "false"}
+            />
+            <span className="text-sm leading-6 text-gray-700">
+              تأیید می‌کنم که{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-primary-light underline underline-offset-2"
+              >
+                قوانین و مقررات
+              </Link>{" "}
+              را مطالعه کرده‌ام و می‌پذیرم.
+            </span>
+          </label>
+          {errors.acceptedTerms && (
+            <p className="text-red-500 text-sm mt-1" role="alert">
+              {errors.acceptedTerms.message}
             </p>
           )}
         </div>
