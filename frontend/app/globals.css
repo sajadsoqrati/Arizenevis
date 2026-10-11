@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FDF8F4;
+  --background: #f5ece3;
   --foreground: #0f172a;
-  --primary: #332212;
-  --primary-light: #5B3C20;
-  --accent: #FFBD39;
-  --4service-btn: #F2A202;
+  --primary: #4a2923;
+  --primary-light: #5b3c20;
+  --accent: #ffbd39;
+  --4service-btn: #c09a6e;
 }
 
 @theme inline {
@@ -39,6 +39,6 @@ body {
     @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
   }
   .service-btn {
-    @apply flex items-center justify-center min-h-[140px] text-xl  font-bold rounded-2xl shadow-md transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer text-primary;
+    @apply flex items-center justify-center min-h-[140px] text-2xl  font-bold rounded-2xl shadow-md transition-all hover:scale-[1.02] hover:shadow-lg cursor-pointer text-[#241815];
   }
 }

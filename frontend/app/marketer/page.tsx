@@ -106,9 +106,9 @@ export default function MarketerPage() {
             </div>
 
             <section className="space-y-4">
-              <h2 className="font-bold">همکاران ({profile.coworkers.length})</h2>
+              <h2 className="font-bold">معرفی‌شدگان ({profile.coworkers.length})</h2>
               {profile.coworkers.length === 0 && (
-                <p className="text-gray-500 text-sm">هنوز همکاری ثبت نشده است.</p>
+                <p className="text-gray-500 text-sm">هنوز کاربری با کد معرف شما ثبت‌نام نکرده است.</p>
               )}
               {profile.coworkers.map((c) => (
                 <div key={c.coworker.id} className="card">

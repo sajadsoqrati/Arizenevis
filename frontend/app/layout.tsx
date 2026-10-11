@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AdminNotifications from "@/components/AdminNotifications";
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],
@@ -29,6 +30,7 @@ export default function RootLayout({
         className={`${vazir.variable} flex min-h-screen flex-col antialiased`}
       >
         <AuthProvider>
+          <AdminNotifications />
           <Navbar />
           <main className="container mx-auto flex-1 px-4 py-8 max-w-6xl">
             {children}

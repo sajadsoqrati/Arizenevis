@@ -5,6 +5,16 @@ import { adminNotificationService } from "../services/admin-notification.service
 
 const router = Router();
 
+// Public stream: only availability is exposed, never admin identities or requests.
+router.get("/presence/stream", (_req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  res.flushHeaders();
+  adminNotificationService.addPresenceClient(res);
+});
+
 function extractToken(req: {
   query: { token?: unknown };
   headers: { authorization?: string };

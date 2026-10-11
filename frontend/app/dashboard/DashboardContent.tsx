@@ -126,7 +126,7 @@ export default function DashboardContent() {
 
               {req.answerDeadline && (
                 <p className="text-sm text-blue-700">
-                  مهلت پاسخ‌دهی: {formatDate(req.answerDeadline)}
+                  زمان پاسخ‌دهی: {formatDate(req.answerDeadline)}
                 </p>
               )}
 

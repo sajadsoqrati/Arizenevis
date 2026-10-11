@@ -122,7 +122,7 @@ export default function AdminPage() {
           answerDeadline: data.answerDeadline,
         }),
       });
-      setMessage("قیمت و مهلت ثبت شد");
+      setMessage("قیمت و زمان انجام ثبت شد");
       setSelectedRequest(null);
       loadData();
     } catch (err) {
@@ -220,7 +220,7 @@ export default function AdminPage() {
                 {req.price && <p>قیمت: {formatPrice(req.price)}</p>}
                 {req.answerDeadline && (
                   <p className="text-sm">
-                    مهلت: {formatDate(req.answerDeadline)}
+                    زمان انجام: {formatDate(req.answerDeadline)}
                   </p>
                 )}
 
@@ -233,11 +233,50 @@ export default function AdminPage() {
                         )}
                         className="grid sm:grid-cols-2 gap-3 mt-2"
                       >
-                        <input
-                          type="number"
-                          placeholder="قیمت (ریال)"
-                          {...priceForm.register("price")}
-                          className="input-field"
+                        <Controller
+                          name="price"
+                          control={priceForm.control}
+                          render={({ field, fieldState }) => (
+                            <div>
+                              <input
+                                {...field}
+                                type="text"
+                                inputMode="numeric"
+                                dir="ltr"
+                                aria-label="قیمت (ریال)"
+                                aria-invalid={!!fieldState.error}
+                                aria-describedby={
+                                  fieldState.error ? "price-error" : undefined
+                                }
+                                placeholder="قیمت (ریال)"
+                                className="input-field"
+                                value={String(field.value ?? "").replace(
+                                  /\B(?=(\d{3})+(?!\d))/g,
+                                  ",",
+                                )}
+                                onChange={(event) => {
+                                  const digits = event.target.value
+                                    .replace(/[۰-۹]/g, (digit) =>
+                                      String(digit.charCodeAt(0) - 1776),
+                                    )
+                                    .replace(/[٠-٩]/g, (digit) =>
+                                      String(digit.charCodeAt(0) - 1632),
+                                    )
+                                    .replace(/[,٬\s]/g, "");
+                                  if (/^\d*$/.test(digits))
+                                    field.onChange(digits);
+                                }}
+                              />
+                              {fieldState.error && (
+                                <p
+                                  id="price-error"
+                                  className="mt-1 text-sm text-red-600"
+                                >
+                                  {fieldState.error.message}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         />
                         <div className="sm:col-span-2">
                           <Controller
@@ -259,7 +298,7 @@ export default function AdminPage() {
                           type="submit"
                           className="btn-primary sm:col-span-2"
                         >
-                          ثبت قیمت و مهلت
+                          ثبت قیمت و زمان انجام
                         </button>
                       </form>
                     ) : (
@@ -333,7 +372,7 @@ export default function AdminPage() {
                   {m.user.phone} — {m.user.city}
                 </p>
                 <p className="text-sm mt-2">
-                  همکاران: {m.coworkers.length} | کل کمیسیون:{" "}
+                  معرفی‌شدگان: {m.coworkers.length} | کل کمیسیون:{" "}
                   {formatPrice(m.commissions.reduce((s, c) => s + c.amount, 0))}
                 </p>
                 {m.coworkers.length > 0 && (

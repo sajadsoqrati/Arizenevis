@@ -55,6 +55,29 @@ export async function processSuccessfulPayment(paymentId: string) {
       return;
     }
 
+    if (payment.discountCodeId) {
+      const discount = await tx.discountCode.findUnique({
+        where: { id: payment.discountCodeId },
+      });
+      if (!discount || !discount.isActive) {
+        throw new AppError(400, "کد تخفیف نامعتبر است");
+      }
+
+      // The conditional increment locks the code row and enforces the limit even
+      // when multiple payments passed validation before either one completed.
+      const redeemed = await tx.discountCode.updateMany({
+        where: {
+          id: discount.id,
+          isActive: true,
+          ...(discount.maxUses === null ? {} : { usedCount: { lt: discount.maxUses } }),
+        },
+        data: { usedCount: { increment: 1 } },
+      });
+      if (redeemed.count === 0) {
+        throw new AppError(400, "ظرفیت استفاده از این کد تخفیف تمام شده است");
+      }
+    }
+
     await tx.helpRequest.update({
       where: { id: helpRequest.id },
       data: {
@@ -63,16 +86,10 @@ export async function processSuccessfulPayment(paymentId: string) {
       },
     });
 
-    if (payment.discountCodeId) {
-      await tx.discountCode.update({
-        where: { id: payment.discountCodeId },
-        data: { usedCount: { increment: 1 } },
-      });
-    }
-
     const coworkerLink = helpRequest.user.coworkerLink;
     if (
-      helpRequest.user.role === Role.COWORKER &&
+      (helpRequest.user.role === Role.CUSTOMER ||
+        helpRequest.user.role === Role.COWORKER) &&
       coworkerLink?.marketerProfile
     ) {
       const { rate, amount } = calculateCommissionAmount(

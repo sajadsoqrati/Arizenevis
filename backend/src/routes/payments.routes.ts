@@ -97,7 +97,7 @@ router.post(
             originalPrice,
             discountAmount,
             finalAmount,
-            discountCodeId,
+            discountCodeId: discountCodeId ?? null,
             status: "PENDING",
             zarinpalAuthority: null,
             zarinpalRefId: null,

@@ -72,7 +72,7 @@ router.patch(
     });
 
     res.json({
-      message: "قیمت و مهلت پاسخ‌دهی ثبت شد",
+      message: "قیمت و زمان پاسخ‌دهی ثبت شد",
       helpRequest: updated,
     });
   })

@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import ProvinceCityFields from "@/components/ProvinceCityFields";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const registerSchema = z
   .object({
@@ -38,6 +39,7 @@ export default function RegisterPage() {
   const { register: registerUser } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -68,7 +70,7 @@ export default function RegisterPage() {
         city: data.city.trim(),
         province: data.province.trim(),
         referralCode:
-          data.role === "COWORKER"
+          data.role === "CUSTOMER" || data.role === "COWORKER"
             ? data.referralCode?.trim() || undefined
             : undefined,
         acceptedTerms: data.acceptedTerms,
@@ -141,7 +143,7 @@ export default function RegisterPage() {
           )}
         </div>
 
-        {selectedRole === "COWORKER" && (
+        {(selectedRole === "CUSTOMER" || selectedRole === "COWORKER") && (
           <div>
             <label className="block text-sm font-medium mb-1">
               کد معرف بازاریاب{" "}
@@ -178,12 +180,25 @@ export default function RegisterPage() {
         />
 
         <div>
-          <label className="block text-sm font-medium mb-1">رمز عبور</label>
-          <input
-            type="password"
-            {...register("password")}
-            className="input-field"
-          />
+          <label htmlFor="password" className="block text-sm font-medium mb-1">
+            رمز عبور
+          </label>
+          <div className="flex justify-between gap-2 input-field ">
+            <input
+              type={showPassword ? "text" : "password"}
+              {...register("password")}
+              className="w-full focus:outline-none"
+            />{" "}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className=" text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {" "}
+              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">
               {errors.password.message}
@@ -195,11 +210,22 @@ export default function RegisterPage() {
           <label className="block text-sm font-medium mb-1">
             تکرار رمز عبور
           </label>
-          <input
-            type="password"
-            {...register("confirmPassword")}
-            className="input-field"
-          />
+          <div className="flex justify-between gap-2 input-field ">
+            <input
+              type={showPassword ? "text" : "password"}
+              {...register("confirmPassword")}
+              className="w-full focus:outline-none"
+            />{" "}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className=" text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {" "}
+              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </button>
+          </div>
           {errors.confirmPassword && (
             <p className="text-red-500 text-sm mt-1">
               {errors.confirmPassword.message}

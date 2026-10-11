@@ -48,7 +48,10 @@ router.post(
 
     let marketerProfileId: string | undefined;
 
-    if (data.role === "COWORKER" && data.referralCode?.trim()) {
+    if (
+      (data.role === "CUSTOMER" || data.role === "COWORKER") &&
+      data.referralCode?.trim()
+    ) {
       const marketer = await prisma.marketerProfile.findUnique({
         where: { referralCode: data.referralCode.trim().toUpperCase() },
       });
@@ -83,7 +86,8 @@ router.post(
         });
       }
 
-      if (data.role === "COWORKER" && marketerProfileId) {
+      if (marketerProfileId) {
+        // The legacy CoworkerLink relation also stores customer referrals.
         await tx.coworkerLink.create({
           data: {
             coworkerId: created.id,

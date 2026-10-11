@@ -6,3 +6,6 @@ dist/
 *.log
 .DS_Store
 pgdata/
+
+# Private discount inventory and exports/backups (never commit redeemable codes).
+/backend/prisma/welcome-codes.*

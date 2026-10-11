@@ -1,34 +1,108 @@
 import { PrismaClient, Role } from "@prisma/client";
 import { hashPassword } from "../src/utils/bcrypt";
+import { seedDiscountCodes } from "./seed-discount-codes";
 
 const prisma = new PrismaClient();
 
 const marketers = [
   {
-    fullName: "علی رحیمی",
+    fullName: "marketer1",
     nationalId: "1010101010",
-    referralCode: "MK-RAHIMI1",
+    referralCode: "MK-marketer1",
+    password: "!09kNhTl",
     phone: "09121111111",
     city: "تهران",
     province: "تهران",
     jobTitle: "بازاریاب",
   },
   {
-    fullName: "سارا کریمی",
+    fullName: "marketer2",
     nationalId: "2020202020",
-    referralCode: "MK-KARIMI2",
+    referralCode: "MK-marketer2",
+    password: "AeAM!FL5",
     phone: "09122222222",
     city: "اصفهان",
     province: "اصفهان",
     jobTitle: "بازاریاب",
   },
   {
-    fullName: "حسین مرادی",
+    fullName:"marketer3",
     nationalId: "3030303030",
-    referralCode: "MK-MORADI3",
+    referralCode: "MK-marketer3",
+    password: "ou5n2U!P",
     phone: "09123333333",
     city: "شیراز",
     province: "فارس",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer4",
+    nationalId: "4040404040",
+    referralCode: "MK-marketer4",
+    password: "3VkguP1!",
+    phone: "09124444444",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer5",
+    nationalId: "5050505050",
+    referralCode: "MK-marketer5",
+    password: "GFApb9!h",
+    phone: "09125555555",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer6",
+    nationalId: "6060606060",
+    referralCode: "MK-marketer6",
+    password: "8lFT8!oI",
+    phone: "09126666666",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer7",
+    nationalId: "7070707070",
+    referralCode: "MK-marketer7",
+    password: "1B!cf24x",
+    phone: "09127777777",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer8",
+    nationalId: "8080808080",
+    referralCode: "MK-marketer8",
+    password: "ME7K!Zbj",
+    phone: "09128888888",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer9",
+    nationalId: "9090909090",
+    referralCode: "MK-marketer9",
+    password: "zl!NlD72",
+    phone: "09129999999",
+    city: "تهران",
+    province: "تهران",
+    jobTitle: "بازاریاب",
+  },
+  {
+    fullName: "marketer10",
+    nationalId: "1010101011",
+    referralCode: "MK-marketer10",
+    password: "s3HEG!If",
+    phone: "09121010101",
+    city: "تهران",
+    province: "تهران",
     jobTitle: "بازاریاب",
   },
 ] as const;
@@ -36,10 +110,8 @@ const marketers = [
 async function main() {
   const adminNationalId = process.env.ADMIN_NATIONAL_ID || "0000000000";
   const adminPassword = process.env.ADMIN_PASSWORD || "Admin@123";
-  const marketerPassword = process.env.MARKETER_PASSWORD || "Marketer@123";
 
   const adminHash = await hashPassword(adminPassword);
-  const marketerHash = await hashPassword(marketerPassword);
 
   await prisma.user.upsert({
     where: { nationalId: adminNationalId },
@@ -57,9 +129,11 @@ async function main() {
   });
 
   for (const marketer of marketers) {
+    const marketerHash = await hashPassword(marketer.password);
     const user = await prisma.user.upsert({
       where: { nationalId: marketer.nationalId },
       update: {
+        passwordHash: marketerHash,
         fullName: marketer.fullName,
         jobTitle: marketer.jobTitle,
         phone: marketer.phone,
@@ -103,21 +177,11 @@ async function main() {
     });
   }
 
-  await prisma.discountCode.upsert({
-    where: { code: "WELCOME100" },
-    update: {},
-    create: {
-      code: "WELCOME100",
-      percentOff: 100,
-      firstTimeOnly: true,
-      maxUses: 1000,
-    },
-  });
+  await seedDiscountCodes(prisma);
 
   console.log("Seed completed:");
   console.log(`  Admin nationalId: ${adminNationalId}`);
   console.log(`  Admin password: ${adminPassword}`);
-  console.log(`  Marketer password: ${marketerPassword}`);
   console.log("  Marketers:");
   for (const marketer of marketers) {
     console.log(
@@ -125,7 +189,7 @@ async function main() {
     );
   }
   console.log("  Categories: 4 service types");
-  console.log("  Discount code: WELCOME100 (100% off, first time only)");
+  console.log("  Discount codes: 1,000 predefined single-use codes (100% off, first purchase only)");
 }
 
 main()

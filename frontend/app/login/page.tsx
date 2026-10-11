@@ -7,10 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const loginSchema = z.object({
   nationalId: z.string().min(5, "شماره ملی یا شماره ثبت شرکت الزامی است"),
-  password: z.string().min(1, "رمز عبور الزامی است"),
+  password: z.string().min(3, "رمز عبور الزامی است"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -19,6 +20,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -55,21 +57,40 @@ export default function LoginPage() {
           <label className="block text-sm font-medium mb-1">
             شماره ملی / شماره ثبت شرکت
           </label>
-          <input {...register("nationalId")} className="input-field" dir="ltr" />
+          <input
+            {...register("nationalId")}
+            className="input-field"
+            dir="ltr"
+          />
           {errors.nationalId && (
-            <p className="text-red-500 text-sm mt-1">{errors.nationalId.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.nationalId.message}
+            </p>
           )}
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">رمز عبور</label>
-          <input
-            type="password"
-            {...register("password")}
-            className="input-field"
-          />
+          <div className="flex justify-between gap-2 input-field ">
+            <input
+              type={showPassword ? "text" : "password"}
+              {...register("password")}
+              className="w-full focus:outline-none"
+            />{" "}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className=" text-gray-500 hover:text-gray-700"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {" "}
+              {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+            </button>
+          </div>
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 

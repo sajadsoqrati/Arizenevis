@@ -1,41 +1,48 @@
 import Link from "next/link";
+import { TbContract } from "react-icons/tb";
+import { GoLaw } from "react-icons/go";
+import { ImHammer2 } from "react-icons/im";
+import { LuPhoneIncoming } from "react-icons/lu";
+import AdminPresence from "@/components/AdminPresence";
+import GuestSignInPrompt from "@/components/GuestSignInPrompt";
 
 const services = [
   {
     slug: "ezharnameh",
     title: "اظهارنامه",
     color: "bg-4service-btn hover:bg-primary-light hover:text-white",
-    icon: "📄",
+    icon: <GoLaw />,
   },
   {
     slug: "gharardad",
     title: "قراردادنویسی",
     color: "bg-4service-btn hover:bg-primary-light hover:text-white",
-    icon: "📝",
+    icon: <TbContract />,
   },
   {
     slug: "moshavareh",
     title: "مشاوره",
     color: "bg-4service-btn hover:bg-primary-light hover:text-white",
-    icon: "💬",
+    icon: <LuPhoneIncoming />,
   },
   {
     slug: "layeheh",
     title: "لایحه",
     color: "bg-4service-btn hover:bg-primary-light hover:text-white",
-    icon: "⚖️",
+    icon: <ImHammer2 />,
   },
 ];
 
 export default function HomePage() {
   return (
     <div className="space-y-12">
-      <section className="text-center space-y-4 py-8">
-        <h1 className="text-4xl font-bold text-primary">سرعت . دقت . تخصص</h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+      <AdminPresence />
+      <section className="text-center space-y-4 py-5">
+        <h1 className="text-2xl font-bold text-primary">
+          {" "}
           برای دریافت خدمات حقوقی، یکی از گزینه‌های زیر را انتخاب کنید و درخواست
-          خود را ثبت نمایید.
-        </p>
+          خود را ثبت نمایید
+        </h1>
       </section>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -51,19 +58,7 @@ export default function HomePage() {
         ))}
       </section>
 
-      <section className="text-center text-gray-500 text-sm">
-        <p>
-          برای ثبت درخواست باید{" "}
-          <Link href="/login" className="text-primary-light underline">
-            وارد
-          </Link>{" "}
-          حساب کاربری خود شوید یا{" "}
-          <Link href="/register" className="text-primary-light underline">
-            ثبت‌نام
-          </Link>{" "}
-          کنید.
-        </p>
-      </section>
+      <GuestSignInPrompt />
     </div>
   );
 }

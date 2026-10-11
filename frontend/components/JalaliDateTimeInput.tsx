@@ -50,7 +50,7 @@ export default function JalaliDateTimeInput({ value, onChange, error }: Props) {
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium">
-        مهلت پاسخ‌دهی (تاریخ شمسی)
+        زمان پاسخ‌دهی (تاریخ شمسی)
       </label>
       <div className="grid grid-cols-3 gap-2">
         <select
