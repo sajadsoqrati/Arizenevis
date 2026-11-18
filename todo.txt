@@ -1,0 +1,6 @@
+ create .gitignore for backend .
+ write the about us page .
+ buy the different paas in liara .
+ deploy the project .
+ set environment variables 
+ change admine credentials

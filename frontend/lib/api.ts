@@ -21,7 +21,7 @@ export function getAccessToken(): string | null {
   return accessToken;
 }
 
-export function setRefreshToken(token: string | null) {
+/* export function setRefreshToken(token: string | null) {
   if (typeof window !== "undefined") {
     if (token) {
       localStorage.setItem("refreshToken", token);
@@ -29,14 +29,14 @@ export function setRefreshToken(token: string | null) {
       localStorage.removeItem("refreshToken");
     }
   }
-}
+} */
 
-export function getRefreshToken(): string | null {
+/* export function getRefreshToken(): string | null {
   if (typeof window !== "undefined") {
     return localStorage.getItem("refreshToken");
   }
   return null;
-}
+} */
 
 export class ApiError extends Error {
   constructor(
@@ -47,20 +47,17 @@ export class ApiError extends Error {
   }
 }
 
-async function refreshAccessToken(): Promise<boolean> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) return false;
-
+export async function refreshAccessToken(): Promise<boolean> {
+  
   try {
     const res = await fetch(`${API_URL}/api/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
+      credentials:"include"      
     });
 
     if (!res.ok) return false;
 
-    const data = await res.json();
+    const data: { accessToken: string } = await res.json();
     setAccessToken(data.accessToken);
     return true;
   } catch {
@@ -82,13 +79,13 @@ export async function api<T>(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  let res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  let res = await fetch(`${API_URL}${path}`, { ...options, headers,credentials:"include" });
 
   if (res.status === 401 && token) {
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       headers.Authorization = `Bearer ${getAccessToken()}`;
-      res = await fetch(`${API_URL}${path}`, { ...options, headers });
+      res = await fetch(`${API_URL}${path}`, { ...options, headers,credentials: "include", });
     }
   }
 

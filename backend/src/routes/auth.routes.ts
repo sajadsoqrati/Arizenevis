@@ -100,7 +100,11 @@ router.post(
     });
 
     const tokens = await createTokenPair(user.id, user.role);
-
+    res.cookie("refreshToken",
+                tokens.refreshToken,{httpOnly:true,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite:"lax"
+                  });
     res.status(201).json({
       message: "ثبت‌نام با موفقیت انجام شد",
       user: {
@@ -108,8 +112,9 @@ router.post(
         fullName: user.fullName,
         role: user.role,
         nationalId: user.nationalId,
+        
       },
-      ...tokens,
+      accessToken: tokens.accessToken,
     });
   })
 );
@@ -133,7 +138,11 @@ router.post(
     }
 
     const tokens = await createTokenPair(user.id, user.role);
-
+    res.cookie("refreshToken",
+                tokens.refreshToken,{httpOnly:true,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                sameSite:"lax"
+                  });
     res.json({
       message: "ورود موفق",
       user: {
@@ -142,7 +151,7 @@ router.post(
         role: user.role,
         nationalId: user.nationalId,
       },
-      ...tokens,
+      accessToken: tokens.accessToken,
     });
   })
 );

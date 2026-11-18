@@ -30,7 +30,6 @@ export default function ServicePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
   const {
     register,
     handleSubmit,

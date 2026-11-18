@@ -9,13 +9,7 @@ import {
   ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import {
-  api,
-  setAccessToken,
-  setRefreshToken,
-  getAccessToken,
-  getRefreshToken,
-} from "./api";
+import { api, setAccessToken, getAccessToken, refreshAccessToken } from "./api";
 import { User, Role } from "./types";
 
 interface AuthContextType {
@@ -56,6 +50,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
+      if (!getAccessToken() && !(await refreshAccessToken())) {
+        setUser(null);
+        return;
+      }
       const data = await api<User>("/api/auth/me");
       setUser(data);
     } catch {
@@ -73,7 +71,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (nationalId: string, password: string) => {
     const data = await api<{
       accessToken: string;
-      refreshToken: string;
       user: User;
     }>("/api/auth/login", {
       method: "POST",
@@ -81,7 +78,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     setAccessToken(data.accessToken);
-    setRefreshToken(data.refreshToken);
     setUser(data.user);
     redirectByRole(data.user.role);
   };
@@ -89,7 +85,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (formData: RegisterData) => {
     const data = await api<{
       accessToken: string;
-      refreshToken: string;
       user: User;
     }>("/api/auth/register", {
       method: "POST",
@@ -97,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     setAccessToken(data.accessToken);
-    setRefreshToken(data.refreshToken);
+
     setUser(data.user);
     redirectByRole(data.user.role);
   };
@@ -106,13 +101,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api("/api/auth/logout", {
         method: "POST",
-        body: JSON.stringify({ refreshToken: getRefreshToken() }),
       });
     } catch {
       // ignore
     }
     setAccessToken(null);
-    setRefreshToken(null);
+
     setUser(null);
     router.push("/login");
   };

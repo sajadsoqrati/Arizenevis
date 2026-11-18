@@ -1,12 +1,11 @@
 {
-  "platform": "node",
-  "app": "law-backend",
   "port": 4000,
   "build": {
     "location": "iran"
   },
   "node": {
-    "version": "20"
+    "version": "24",
+    "mirror": false
   },
   "disks": []
 }
