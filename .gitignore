@@ -9,3 +9,5 @@ pgdata/
 
 # Private discount inventory and exports/backups (never commit redeemable codes).
 /backend/prisma/welcome-codes.*
+.env.example
+docker-compose.yml

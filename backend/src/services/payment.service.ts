@@ -63,7 +63,8 @@ export async function processSuccessfulPayment(paymentId: string) {
         throw new AppError(400, "کد تخفیف نامعتبر است");
       }
 
-      // The conditional increment locks the code row and enforces the limit even
+      // The condition
+      // al increment locks the code row and enforces the limit even
       // when multiple payments passed validation before either one completed.
       const redeemed = await tx.discountCode.updateMany({
         where: {
